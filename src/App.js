@@ -4,6 +4,7 @@ import Figure from 'react-bootstrap/Figure';
 import Table from 'react-bootstrap/Table';
 import Form from 'react-bootstrap/Form';
 import Alert from 'react-bootstrap/Alert';
+import Weather from './components/Weather';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 class App extends React.Component {
@@ -14,40 +15,61 @@ class App extends React.Component {
       locationQuery: '',
       showMap: false,
       alert: false,
-      erroreMsg:''
+      erroreMsg: '',
+      accWeatherData: []
     }
   }
 
   getLocation = async (event) => {
     event.preventDefault();
+    try {
     await this.setState({
       locationQuery: event.target.cityName.value
     })
     let url = `https://eu1.locationiq.com/v1/search.php?key=${process.env.REACT_APP_LOCATIONIQ_KEY}&q=${this.state.locationQuery}&format=json`
+    //https://eu1.locationiq.com/v1/search.php?key=pk.1ff77471cda6f1204d9448309b9a7614&q=amman&format=json
+
 
     
-try{
-   
+      let resData = await axios.get(url);
+
+      let weatherRes = await axios.get(`http://localhost:3001/weather?searchQuery=${this.state.locationQuery}&lat=31.95&lon=35.91`)
+      this.setState({
+        cityData: resData.data[0],
+        showMap: true,
+        alert: false,
+        accWeatherData: weatherRes.data
+      })
+      console.log(this.state.photoData)
+    } catch (err) {
+      this.setState(
+        {
+          alert: true,
+          error: `${err.message}`
+        })
+
+    }
 
 
 
-    let resData = await axios.get(url);
 
 
-    this.setState({
-      cityData: resData.data[0],
-      showMap: true,
-      alert: false
-    });
-  }
-  catch(err){
-    this.setState({
-      erroreMsg:`${err.message}:Unable to geocode Please Enter Name`,
-      alert: true
-    })
-  }
 
-   
+
+    //   this.setState({
+    //     cityData: resData.data[0],
+    //     showMap: true,
+    //     alert: false
+    //   });
+    // }
+    // catch(err){
+    //   this.setState({
+    //     erroreMsg:`${err.message}:Unable to geocode Please Enter Name`,
+    //     alert: true
+    //   })
+    // }
+
+
 
   }
 
@@ -75,12 +97,12 @@ try{
           <button type="submit" className="btn btn-primary mb-2" value="Explore!">Explore!</button>
         </Form>
 
-        {this.state.alert &&   <Alert variant={'warning'}>{this.state.erroreMsg }
-             
-  </Alert>
-                
-            
-          }
+        {this.state.alert && <Alert variant={'warning'}>{this.state.erroreMsg}
+
+        </Alert>
+
+
+        }
 
 
         {this.state.showMap &&
@@ -122,6 +144,9 @@ try{
               </Figure.Caption>
             </Figure>
           </>}
+        {this.state.accWeatherData.map(weatherData => {
+          return <Weather description={weatherData.description} date={weatherData.date} />})}
+
 
       </div>
 
