@@ -23,11 +23,13 @@ class App extends React.Component {
     await this.setState({
       locationQuery: event.target.cityName.value
     })
+    let url = `https://eu1.locationiq.com/v1/search.php?key=${process.env.REACT_APP_LOCATIONIQ_KEY}&q=${this.state.locationQuery}&format=json`
+
+    
 try{
    
 
 
-    let url = `https://eu1.locationiq.com/v1/search.php?key=${process.env.REACT_APP_LOCATIONIQ_KEY}&q=${this.state.locationQuery}&format=json`
 
     let resData = await axios.get(url);
 
