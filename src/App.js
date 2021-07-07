@@ -6,6 +6,8 @@ import Form from 'react-bootstrap/Form';
 import Alert from 'react-bootstrap/Alert';
 import Weather from './components/Weather';
 import 'bootstrap/dist/css/bootstrap.min.css';
+// import components from './components';
+
 
 class App extends React.Component {
   constructor(props) {
@@ -22,25 +24,25 @@ class App extends React.Component {
 
   getLocation = async (event) => {
     event.preventDefault();
-    try {
-    await this.setState({
-      locationQuery: event.target.cityName.value
-    })
-    let url = `https://eu1.locationiq.com/v1/search.php?key=${process.env.REACT_APP_LOCATIONIQ_KEY}&q=${this.state.locationQuery}&format=json`
-    //https://eu1.locationiq.com/v1/search.php?key=pk.1ff77471cda6f1204d9448309b9a7614&q=amman&format=json
-
-
     
+      await this.setState({
+        locationQuery: event.target.cityName.value
+      })
+      let url = `https://eu1.locationiq.com/v1/search.php?key=${process.env.REACT_APP_LOCATIONIQ_KEY}&q=${this.state.locationQuery}&format=json`
+      //https://eu1.locationiq.com/v1/search.php?key=pk.1ff77471cda6f1204d9448309b9a7614&q=amman&format=json
+
+      try{
+
       let resData = await axios.get(url);
 
-      let weatherRes = await axios.get(`http://localhost:3001/weather?searchQuery=${this.state.locationQuery}&lat=31.95&lon=35.91`)
+      let weatherRes = await axios.get(`http://localhost:3001/weather?locationQuery=${this.state.locationQuery}`)
       this.setState({
         cityData: resData.data[0],
         showMap: true,
         alert: false,
         accWeatherData: weatherRes.data
       })
-      console.log(this.state.photoData)
+      console.log(this.state.accWeatherData)
     } catch (err) {
       this.setState(
         {
@@ -144,10 +146,20 @@ class App extends React.Component {
               </Figure.Caption>
             </Figure>
           </>}
-        {this.state.accWeatherData.map(weatherData => {
-          return <Weather description={weatherData.description} date={weatherData.date} />})}
-
-
+        {this.state.accWeatherData.map((weatherData,index) => {
+          return (
+          <div key={index}>
+             <Weather description={weatherData.description} date={weatherData.date} />
+             </div>
+             )})}
+{/* 
+{this.state.accWeatherData.length &&
+        // map
+          <Weather
+            weth = {this.state.accWeatherData}
+          />
+        } */}
+      
       </div>
 
     )
