@@ -5,6 +5,7 @@ import Table from 'react-bootstrap/Table';
 import Form from 'react-bootstrap/Form';
 import Alert from 'react-bootstrap/Alert';
 import Weather from './components/Weather';
+import Movies from './components/Movies';
 import 'bootstrap/dist/css/bootstrap.min.css';
 // import components from './components';
 
@@ -18,42 +19,67 @@ class App extends React.Component {
       showMap: false,
       alert: false,
       erroreMsg: '',
-      accWeatherData: []
+      accWeatherData: [],
+      accMovieData: []
     }
   }
 
   getLocation = async (event) => {
     event.preventDefault();
-    
-      await this.setState({
-        locationQuery: event.target.cityName.value
-      })
-      let url = `https://eu1.locationiq.com/v1/search.php?key=${process.env.REACT_APP_LOCATIONIQ_KEY}&q=${this.state.locationQuery}&format=json`
-      //https://eu1.locationiq.com/v1/search.php?key=pk.1ff77471cda6f1204d9448309b9a7614&q=amman&format=json
 
-      try{
+    await this.setState({
+      locationQuery: event.target.cityName.value
+    });
+    //https://eu1.locationiq.com/v1/search.php?key=pk.1ff77471cda6f1204d9448309b9a7614&q=amman&format=json
+    try {
+
+      let url = `https://eu1.locationiq.com/v1/search.php?key=${process.env.REACT_APP_LOCATIONIQ_KEY}&q=${this.state.locationQuery}&format=json`
+
 
       let resData = await axios.get(url);
 
-      let weatherRes = await axios.get(`http://localhost:3001/weather?locationQuery=${this.state.locationQuery}`)
+      // let weatherRes = await axios.get(`http://localhost:3001/weather?locationQuery=${this.state.locationQuery}`)
       this.setState({
         cityData: resData.data[0],
         showMap: true,
         alert: false,
-        accWeatherData: weatherRes.data
-      })
-      console.log(this.state.accWeatherData)
+        // accWeatherData: weatherRes.data
+      });
+
+      this.getWeather();
+      this.getMovies();
+      // console.log(this.state.accWeatherData)
     } catch (err) {
       this.setState(
         {
           alert: true,
-          error: `${err.message}`
+          erroreMsg: `${err.message}`
         })
+      }
 
-    }
+    };
 
 
+    getWeather = async () => {
+      
+        let weatherRes = await axios.get(`http://localhost:3001/weather?locationQuery=${this.state.locationQuery}`)
+        this.setState({
 
+          accWeatherData: weatherRes.data
+        });
+        console.log(this.state.accWeatherData)
+     
+
+      };
+      getMovies=async()=>{
+        let movieRes=await axios.get(`http://localhost:3001/movies?locationQuery=${this.state.locationQuery}`)
+        this.setState({
+          accMovieData:movieRes.data
+        });
+        console.log(this.state.accMovieData)
+
+      }
+    
 
 
 
@@ -73,7 +99,7 @@ class App extends React.Component {
 
 
 
-  }
+  
 
 
 
@@ -145,21 +171,35 @@ class App extends React.Component {
                 City Name:{this.state.cityData.display_name}
               </Figure.Caption>
             </Figure>
-          </>}
-        {this.state.accWeatherData.map((weatherData,index) => {
+          </>
+          }
+          <>
+          
+            
+        {this.state.accWeatherData.map((weatherData, index) => {
+          // <h2>Weather</h2>
           return (
-          <div key={index}>
-             <Weather description={weatherData.description} date={weatherData.date} />
-             </div>
-             )})}
-{/* 
+            <div key={index}>
+              
+              <Weather description={weatherData.description} date={weatherData.date} />
+            </div>
+          )
+        })}
+        
+        </>
+        <>
+
+        {this.state.accMovieData &&
+        <Movies movieData={this.state.accMovieData}/>
+        }</>
+        {/* 
 {this.state.accWeatherData.length &&
         // map
           <Weather
             weth = {this.state.accWeatherData}
           />
         } */}
-      
+
       </div>
 
     )
