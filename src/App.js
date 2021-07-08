@@ -6,6 +6,8 @@ import Form from 'react-bootstrap/Form';
 import Alert from 'react-bootstrap/Alert';
 import Weather from './components/Weather';
 import Movies from './components/Movies';
+import WeatherDay from './components/WeatherDay';
+import CardDeck from 'react-bootstrap/CardDeck';
 import 'bootstrap/dist/css/bootstrap.min.css';
 // import components from './components';
 
@@ -182,6 +184,9 @@ class App extends React.Component {
             <div key={index}>
               
               <Weather description={weatherData.description} date={weatherData.date} />
+              <CardDeck id='card'>
+            <WeatherDay key={index}  date={weatherData.date} description={weatherData.description} />
+            </CardDeck>
             </div>
           )
         })}
