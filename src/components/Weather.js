@@ -3,10 +3,14 @@ import Table from 'react-bootstrap/Table';
 
 
  class Weather extends React.Component {
+  
     render() {
+      
         return (
             
             <div>
+              
+             
              <Table className="table table-bordered">
               <thead >
                 <tr >
@@ -23,11 +27,10 @@ import Table from 'react-bootstrap/Table';
                   
 
                 </tr>
-                {/* <tr className="table-danger">...</tr> */}
               </tbody>
             </Table>
-            {/* <h2>{this.props.date}  </h2> 
-            <h2> {this.props.description}</h2>   */}
+     
+          
             </div>
         )
     }
